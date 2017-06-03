@@ -2,9 +2,15 @@
  * Created by Edge on 6/3/2017.
  */
 import React from 'react';
-import { flickrImages, shutterStockVideos } from '../Api/api';
 import { connect } from 'react-redux';
-import { searchMediaAction } from '../actions/mediaActions';
+import {
+    selectImageAction,
+    searchMediaAction,
+    selectVideoAction
+} from '../actions/mediaActions';
+import PhotoPage from '../components/PhotoPage';
+import VideoPage from '../components/VideoPage';
+import '../styles/style.css';
 import PropTypes from 'prop-types';
 
 // MediaGalleryPage Component
@@ -14,18 +20,59 @@ class MediaGalleryPage extends React.Component {
     componentDidMount() {
         this.props.dispatch(searchMediaAction('rain'));
     }
+    handleSelectImage(selectedImage) {
+        this.props.dispatch(selectImageAction(selectedImage));
+    }
+    handleSelectVideo(selectedVideo) {
+        this.props.dispatch(selectVideoAction(selectedVideo));
+    }
+    handleSearch(event) {
+        event.preventDefault();
+        if (this.query !== null) {
+            this.props.dispatch(searchMediaAction(this.query.value));
+            this.query.value = '';
+        }
+    }
 
     render() {
-        console.log(this.props.images, 'Images');
-        console.log(this.props.videos, 'Videos');
-        console.log(this.props);
-        // TODO: Render videos and images here
-        return (<div></div>)
+        const { images, selectedImage, videos, selectedVideo } = this.props;
+        return (
+            <div className="container-fluid">
+                {images && selectedImage? <div>
+                        <input
+                            type="text"
+                            ref={ref => (this.query = ref)}
+                        />
+                        <input
+                            type="submit"
+                            className="btn btn-primary"
+                            value="Search Library"
+                            onClick={this.handleSearch}
+                        />
+                        <div className="row">
+                            <PhotoPage
+                                images={images}
+                                selectedImage={selectedImage}
+                                onHandleSelectImage={this.handleSelectImage}
+                            />
+                            <VideoPage
+                                videos={videos}
+                                selectedVideo={selectedVideo}
+                                onHandleSelectVideo={this.handleSelectVideo}
+                            />
+                        </div>
+                    </div> : 'loading ....'}
+            </div>
+        );
     }
 }
 
 MediaGalleryPage.propTypes = {
-
+    images: PropTypes.array,
+    selectedImage: PropTypes.object,
+    videos: PropTypes.array,
+    selectedVideo: PropTypes.object,
+    dispatch: PropTypes.func.isRequired
 };
 
 const mapStateToProps = ({ images, videos }) => ({
