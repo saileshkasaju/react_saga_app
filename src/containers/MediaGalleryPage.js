@@ -20,25 +20,25 @@ class MediaGalleryPage extends React.Component {
     componentDidMount() {
         this.props.dispatch(searchMediaAction('rain'));
     }
-    handleSelectImage(selectedImage) {
+    handleSelectImage = (selectedImage) => {
         this.props.dispatch(selectImageAction(selectedImage));
-    }
-    handleSelectVideo(selectedVideo) {
+    };
+    handleSelectVideo = (selectedVideo) => {
         this.props.dispatch(selectVideoAction(selectedVideo));
-    }
-    handleSearch(event) {
+    };
+    handleSearch = (event) => {
         event.preventDefault();
         if (this.query !== null) {
             this.props.dispatch(searchMediaAction(this.query.value));
             this.query.value = '';
         }
-    }
+    };
 
     render() {
         const { images, selectedImage, videos, selectedVideo } = this.props;
         return (
             <div className="container-fluid">
-                {images && selectedImage? <div>
+                {images && selectedImage && videos && selectedVideo ? <div>
                         <input
                             type="text"
                             ref={ref => (this.query = ref)}
@@ -75,11 +75,11 @@ MediaGalleryPage.propTypes = {
     dispatch: PropTypes.func.isRequired
 };
 
-const mapStateToProps = ({ images, videos }) => ({
-    images: images[0],
-    selectedImage: images.selectedImage,
-    videos: videos[0],
-    selectedVideo: images.selectedVideo
+const mapStateToProps = (state) => ({
+    images: state.images[0],
+    selectedImage: state.images.selectedImage,
+    videos: state.videos[0],
+    selectedVideo: state.videos.selectedVideo
 });
 
 export default connect(mapStateToProps)(MediaGalleryPage);
